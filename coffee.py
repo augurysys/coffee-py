@@ -7,27 +7,24 @@ import Queue
 from threading import Thread
 import json
 import time
-
-
-IDLE = "idle"
-GRINDING = "grinding"
-WATER = "water"
-MILK = "milk"
+from get_coffee_status import get_coffee_status
+import event_types
 
 q = Queue.Queue()
 k = kinesis.connect_to_region("us-east-1")
 
 
-# def write(w, data):
-#     count = len(data) / 2
-#     fmt = "%dh" % (count)
-#     shorts = struct.unpack(fmt, data)
-#     for s in shorts:
-#         w.write(str(s) + "\n")
+def write(w, data):
+    count = len(data) / 2
+    fmt = "%dh" % (count)
+    shorts = struct.unpack(fmt, data)
+    for s in shorts:
+        w.write(str(s) + "\n")
 
 def algo(data):
-    return IDLE
-    
+    status, rms = get_coffee_status(data)
+    print '{} rms:{}'.format(status, rms)
+    return status
 
 def worker():
     prev_state = ""
@@ -56,18 +53,18 @@ if __name__ == "__main__":
     t.daemon = True
     t.start()
 
-    # w = open("/tmp/cap.txt", "w")
+    w = open("/tmp/es3.txt", "w")
 
     buf = deque([])
     for i in range(0, 4):
         buf.append(stream.read(500))
-        # write(w, buf[i])
+        write(w, buf[i])
 
     while True:
         q.put(buf[0] + buf[1] + buf[2] + buf[3])
         buf.rotate(-1)
         buf[3] = stream.read(500)
-        # write(w, buf[3])
+        write(w, buf[3])
 
     q.join()
-    # w.close()
+    w.close()
