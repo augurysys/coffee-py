@@ -53,7 +53,7 @@ if __name__ == "__main__":
     t.daemon = True
     t.start()
 
-    w = open("/tmp/ca4.txt", "w")
+    w = open("/tmp/bennyca.txt", "w")
 
     buf = deque([])
     for i in range(0, 4):

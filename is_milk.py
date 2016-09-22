@@ -6,7 +6,7 @@ THRESH_1 = 0.29
 
 GRIDING_FREQ2 = 150
 GRIDING_WIN2 = 2
-THRESH_2 = 0.03
+THRESH_2 = 0.05
 
 def is_milk(x_fft, fft_scale):
 
@@ -22,7 +22,7 @@ def is_milk(x_fft, fft_scale):
     enrgey_freq_2 = np.sum(x_fft[start_ix2:end_ix2])
     enrgey_prec2 = enrgey_freq_2/all_energy
 
-    if enrgey_prec1 >= THRESH_1 and  enrgey_prec2 <= THRESH_2 :
+    if enrgey_prec1 >= THRESH_1 and  enrgey_prec2 <= THRESH_2 : # milk and not water
         return True
 
     return False
